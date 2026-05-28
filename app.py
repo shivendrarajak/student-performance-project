@@ -278,42 +278,53 @@ if st.button("🚀 Predict"):
     st.pyplot(fig)
 
     st.divider()
-
-    #  SUBJECT GRADE 
+    
+    # SUBJECT GRADE
     st.subheader("📘 Subject-wise Grades")
 
     results = []
 
     for sub in subjects:
+
         sub_enc = subject_encoder.transform([sub])[0]
 
         grade_input = [[
-            tenth, twelfth,
-                sem1,
-                sem2,
-                sem3,
-                sem4,
-                sem5,
-                sub_enc
-        ]  ]
+            tenth,
+            twelfth,
+            sem1,
+            sem2,
+            sem3,
+            sem4,
+            sem5,
+            sub_enc
+        ]]
 
-    grade_pred = grade_model.predict(grade_input)[0]
+        # prediction
+        grade_pred = grade_model.predict(grade_input)[0]
 
-    grade = grade_map_rev.get(int(grade_pred), "N/A")
+        # convert number -> grade
+        grade = grade_map_rev.get(int(grade_pred), "N/A")
 
-    results.append([sub, grade])
+        # save result
+        results.append([sub, grade])
 
+    # SHOW CARDS
     cols = st.columns(3)
 
     for i, (sub, grade) in enumerate(results):
+
         cols[i % 3].markdown(
-            f"<div class='small-card'>{sub}<br><b>{grade}</b></div>",
+            f"""
+            <div class='small-card'
+            style='margin-bottom:10px;'>
+            <h4>{sub}</h4>
+            <h3>{grade}</h3>
+            </div>
+            """,
             unsafe_allow_html=True
         )
-        
-# SHOW RESULTS
-    # -----------------------------------------------------
 
+    # TABLE
     if results:
 
         df_result = pd.DataFrame(
@@ -337,7 +348,6 @@ if st.button("🚀 Predict"):
         )
 
     else:
-
         st.warning("⚠️ Please select subjects")
 
     st.divider()
